@@ -129,9 +129,13 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 4000,
+        max_tokens: 8000,
         system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: buildUserPrompt(payload) }]
+        messages: [
+          { role: 'user', content: buildUserPrompt(payload) },
+          // 응답을 '{'로 시작하도록 강제 (머리말·코드펜스 방지)
+          { role: 'assistant', content: '{' }
+        ]
       })
     });
 
@@ -142,19 +146,38 @@ export default async function handler(req, res) {
     }
 
     const data = await upstream.json();
-    const text = (data.content || [])
+
+    // 프리필한 '{'를 다시 붙여 완전한 JSON 문자열로 복원
+    let text = '{' + (data.content || [])
       .filter((block) => block.type === 'text')
       .map((block) => block.text)
-      .join('')
-      .replace(/```json|```/g, '')
-      .trim();
+      .join('');
+
+    text = text.replace(/```json|```/g, '').trim();
+
+    if (data.stop_reason === 'max_tokens') {
+      console.error('Truncated output. usage:', JSON.stringify(data.usage));
+      return res.status(502).json({ error: '생성 결과가 너무 길어 중간에 끊겼습니다. 입력을 조금 줄이고 다시 생성해 주세요. (E-TRUNC)' });
+    }
+
+    // 앞뒤에 군더더기가 붙은 경우 중괄호 구간만 잘라냄
+    const first = text.indexOf('{');
+    const last = text.lastIndexOf('}');
+    if (first !== -1 && last > first) text = text.slice(first, last + 1);
 
     let result;
     try {
       result = JSON.parse(text);
-    } catch {
-      console.error('JSON parse failed:', text.slice(0, 500));
-      return res.status(502).json({ error: '생성 결과의 형식이 올바르지 않습니다. 다시 생성해 주세요.' });
+    } catch (parseErr) {
+      console.error('JSON parse failed. stop_reason:', data.stop_reason);
+      console.error('raw head:', text.slice(0, 800));
+      console.error('raw tail:', text.slice(-400));
+      return res.status(502).json({ error: '생성 결과의 형식이 올바르지 않습니다. 다시 생성해 주세요. (E-PARSE)' });
+    }
+
+    if (!result.semesterGoal) {
+      console.error('Missing semesterGoal. keys:', Object.keys(result));
+      return res.status(502).json({ error: '생성 결과에 필수 항목이 없습니다. 다시 생성해 주세요. (E-SHAPE)' });
     }
 
     return res.status(200).json({ mode: 'ai', model: MODEL, result });
