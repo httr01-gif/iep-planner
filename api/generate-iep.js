@@ -131,11 +131,7 @@ export default async function handler(req, res) {
         model: MODEL,
         max_tokens: 8000,
         system: SYSTEM_PROMPT,
-        messages: [
-          { role: 'user', content: buildUserPrompt(payload) },
-          // 응답을 '{'로 시작하도록 강제 (머리말·코드펜스 방지)
-          { role: 'assistant', content: '{' }
-        ]
+        messages: [{ role: 'user', content: buildUserPrompt(payload) }]
       })
     });
 
@@ -147,8 +143,7 @@ export default async function handler(req, res) {
 
     const data = await upstream.json();
 
-    // 프리필한 '{'를 다시 붙여 완전한 JSON 문자열로 복원
-    let text = '{' + (data.content || [])
+    let text = (data.content || [])
       .filter((block) => block.type === 'text')
       .map((block) => block.text)
       .join('');
