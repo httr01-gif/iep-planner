@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="생성형 AI 기반 개별화교육계획 작성 프로그램" />
+  <title>PAIR IEP Builder | 개별화교육계획 작성</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="첫 화면으로 이동">
+        <span class="brand-mark" aria-hidden="true">P</span>
+        <span>
+          <strong>PAIR IEP Builder</strong>
+          <small>생성형 AI 기반 개별화교육계획 작성</small>
+        </span>
+      </a>
+      <div class="source-badge" title="프로그램 설계 기준">
+        <span class="source-dot"></span>
+        2022 개정 특수교육 기본 교육과정 연계
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="hero">
+        <img class="hero-banner" src="hero-banner.png" alt="PAIR 개별화교육계획 작성 프로그램 - 생성형 AI 기반 맞춤형 IEP 작성 지원. 학교급·유형 선택, 학생 정보 입력, AI로 IEP 초안 생성의 3단계로 진행됩니다." />
+      </section>
+
+      <nav class="stepper" aria-label="작성 단계">
+        <button class="step active" data-step-target="1" type="button">
+          <span>1</span><b>유형 선택</b><small>학교급·교과/영역</small>
+        </button>
+        <div class="step-line"></div>
+        <button class="step" data-step-target="2" type="button" disabled>
+          <span>2</span><b>학생 정보</b><small>현행 수준·요구</small>
+        </button>
+        <div class="step-line"></div>
+        <button class="step" data-step-target="3" type="button" disabled>
+          <span>3</span><b>계획 생성</b><small>검토·출력</small>
+        </button>
+      </nav>
+
+      <section id="step1" class="panel step-panel active" aria-labelledby="step1-title">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">STEP 1</p>
+            <h2 id="step1-title">작성할 계획의 기본 유형을 선택하세요.</h2>
+          </div>
+          <p>선택한 학교급과 유형에 맞춰 교과 및 생활기능 영역이 자동으로 구성됩니다.</p>
+        </div>
+
+        <div class="form-grid two-col">
+          <div class="field-group">
+            <label for="schoolLevel">학교급 <em>필수</em></label>
+            <select id="schoolLevel">
+              <option value="">학교급을 선택하세요</option>
+              <option value="elementary">초등학교</option>
+              <option value="middle">중학교</option>
+              <option value="high">고등학교</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="gradeSelect">학년 <em>필수</em></label>
+            <select id="gradeSelect"><option value="">학교급을 먼저 선택하세요</option></select>
+            <p class="help-text">교과형은 선택한 학년군에 성취기준이 있는 교과만 제시됩니다.</p>
+          </div>
+        </div>
+
+        <div class="field-group full">
+          <span class="field-label">개별화교육계획 작성 유형 <em>필수</em></span>
+          <div class="type-cards" role="radiogroup" aria-label="작성 유형">
+            <label class="type-card">
+              <input type="radio" name="planType" value="subject" />
+              <span class="type-icon" aria-hidden="true">교</span>
+              <span><b>교과형</b><small>교과 학습 참여에 필요한 기초 기술 중심</small></span>
+            </label>
+            <label class="type-card">
+              <input type="radio" name="planType" value="life" />
+              <span class="type-icon" aria-hidden="true">생</span>
+              <span><b>생활기능 중심</b><small>실제 생활과 일반화를 중심으로 구성</small></span>
+            </label>
+          </div>
+        </div>
+
+        <div id="selectionArea" class="selection-area hidden">
+          <div id="subjectSelection" class="field-group hidden">
+            <label for="subjectSelect">교과 선택 <em>필수</em></label>
+            <select id="subjectSelect"><option value="">학교급을 먼저 선택하세요</option></select>
+            <p class="help-text">해당 학교급의 기본 교육과정 교과만 제시됩니다.</p>
+          </div>
+
+          <div id="lifeSelection" class="field-group hidden">
+            <span class="field-label">생활기능 영역 선택 <em>1개 이상 선택</em></span>
+            <div id="lifeAreaList" class="life-area-list" role="group" aria-label="생활기능 영역 선택"></div>
+            <p class="help-text">여러 영역을 함께 선택하면 영역 간 연계를 고려한 통합 목표로 작성됩니다.</p>
+            <div id="lifeAreaInfo" class="info-card hidden"></div>
+            <div id="adaptationDetailWrap" class="field-group nested hidden">
+              <label for="adaptationDetail">생활적응 세부 유형</label>
+              <select id="adaptationDetail">
+                <option value="통합">통합적으로 구성</option>
+                <option value="시각중복">시각중복</option>
+                <option value="청각중복">청각중복</option>
+                <option value="지체중복">지체중복</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="privacy-notice">
+          <span class="notice-icon" aria-hidden="true">!</span>
+          <div><b>개인정보 입력 전 확인</b><p>학생 실명, 학교명, 주소, 전화번호, 주민등록번호, 진단서·의무기록 원문은 입력하지 마세요. 학생은 가명 또는 번호로 구분하세요.</p></div>
+        </div>
+
+        <div class="panel-actions end">
+          <button id="goStep2" class="btn primary" type="button">학생 정보 입력하기 <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+
+      <section id="step2" class="panel step-panel" aria-labelledby="step2-title">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">STEP 2</p>
+            <h2 id="step2-title">학생의 현재 모습과 교육적 요구를 입력하세요.</h2>
+          </div>
+          <p>AI가 추측하지 않도록 관찰 가능한 사실과 실제 생활 맥락을 중심으로 작성합니다.</p>
+        </div>
+
+        <div class="context-summary" id="contextSummary"></div>
+
+        <div class="form-grid two-col compact-grid">
+          <div class="field-group">
+            <label for="semesterSelect">학기 <em>필수</em></label>
+            <select id="semesterSelect">
+              <option value="1학기">1학기</option>
+              <option value="2학기">2학기</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="studentAlias">학생 구분명 <span>선택</span></label>
+            <input id="studentAlias" type="text" maxlength="20" placeholder="예: 학생 A, 3-1-01" />
+          </div>
+        </div>
+
+        <div id="subjectStandardSection" class="curriculum-section hidden">
+          <div class="curriculum-heading">
+            <div>
+              <p class="section-kicker">교육과정 연계</p>
+              <h3>관련 성취기준을 선택하세요.</h3>
+            </div>
+            <span id="standardCountBadge" class="count-badge">0개 선택</span>
+          </div>
+          <div class="field-group">
+            <span class="field-label">성취기준 <em>1개 이상 선택</em></span>
+            <div id="standardsList" class="standards-list" role="group" aria-label="성취기준 선택" aria-describedby="standardsHelp"></div>
+            <p id="standardsHelp" class="help-text">체크 표시로 여러 항목을 선택할 수 있습니다. 선택한 성취기준은 목표 문장의 복사 대상이 아니라 교육과정 연계 근거로 사용됩니다.</p>
+          </div>
+          <fieldset class="check-fieldset">
+            <legend>교과형 목표 작성 방향</legend>
+            <label><input type="checkbox" name="skillDirection" value="기초학습기술" checked /> 기초학습기술</label>
+            <label><input type="checkbox" name="skillDirection" value="선수지식·관련 지식" checked /> 선수지식·관련 지식</label>
+            <label><input type="checkbox" name="skillDirection" value="학습전략" checked /> 학습전략</label>
+            <label><input type="checkbox" name="skillDirection" value="과제수행기술" checked /> 과제수행기술</label>
+            <label><input type="checkbox" name="skillDirection" value="의사소통·참여 기술" checked /> 의사소통·참여 기술</label>
+          </fieldset>
+          <div class="direction-note"><b>작성 방향</b> 교과 내용을 단순화한 진도 목표보다, 해당 교과를 학습하기 위해 학생이 지속적으로 익혀야 할 기술과 전략을 중심으로 작성합니다.</div>
+        </div>
+
+        <div id="lifeSceneSection" class="curriculum-section hidden">
+          <div class="curriculum-heading">
+            <div>
+              <p class="section-kicker">생태학적 맥락</p>
+              <h3>기능을 사용할 주요 생활 장면을 선택하세요.</h3>
+            </div>
+          </div>
+          <fieldset class="check-fieldset scenes">
+            <legend class="sr-only">생활 장면</legend>
+            <label><input type="checkbox" name="lifeScene" value="교실" checked /> 교실</label>
+            <label><input type="checkbox" name="lifeScene" value="급식실" /> 급식실</label>
+            <label><input type="checkbox" name="lifeScene" value="화장실·신변처리 공간" /> 화장실·신변처리</label>
+            <label><input type="checkbox" name="lifeScene" value="통학·이동 상황" /> 통학·이동</label>
+            <label><input type="checkbox" name="lifeScene" value="가정" checked /> 가정</label>
+            <label><input type="checkbox" name="lifeScene" value="지역사회" /> 지역사회</label>
+            <label><input type="checkbox" name="lifeScene" value="직업·현장실습" /> 직업·현장실습</label>
+          </fieldset>
+        </div>
+
+        <div class="input-sections">
+          <div class="field-group full">
+            <label for="currentLevel">현행 수준 <em>필수</em></label>
+            <textarea id="currentLevel" rows="5" maxlength="2000" placeholder="관찰 기록과 평가 결과를 바탕으로 현재 가능한 수행, 도움 수준, 어려움이 나타나는 조건을 구체적으로 입력하세요."></textarea>
+            <span class="char-count" data-for="currentLevel">0 / 2000</span>
+          </div>
+
+          <div class="field-group full">
+            <label for="semesterGoalDraft">교사가 생각한 학기 목표 초안 <em>필수</em></label>
+            <textarea id="semesterGoalDraft" rows="3" maxlength="1000" placeholder="예: 수업 중 필요한 물건을 그림카드로 요구할 수 있다."></textarea>
+            <span class="char-count" data-for="semesterGoalDraft">0 / 1000</span>
+          </div>
+
+          <div class="form-grid two-col">
+            <div class="field-group">
+              <label for="studentParentNeeds">학생 및 학부모 요구 <em>필수</em></label>
+              <textarea id="studentParentNeeds" rows="5" maxlength="1500" placeholder="학생이 원하는 것, 보호자가 우선적으로 기대하는 변화, 가정에서 필요한 기능 등을 입력하세요."></textarea>
+              <span class="char-count" data-for="studentParentNeeds">0 / 1500</span>
+            </div>
+            <div class="field-group">
+              <label for="strengthsInterests">학생 강점 및 흥미 <em>필수</em></label>
+              <textarea id="strengthsInterests" rows="5" maxlength="1500" placeholder="선호 활동, 잘하는 것, 효과적인 강화물, 참여가 높아지는 조건 등을 입력하세요."></textarea>
+              <span class="char-count" data-for="strengthsInterests">0 / 1500</span>
+            </div>
+          </div>
+
+          <div class="form-grid two-col">
+            <div class="field-group">
+              <label for="supportNeeds">지원이 필요한 사항 <em>필수</em></label>
+              <textarea id="supportNeeds" rows="5" maxlength="1500" placeholder="시각적 지원, AAC, 보조공학, 촉진 수준, 감각·행동 지원, 환경 조정 등을 입력하세요."></textarea>
+              <span class="char-count" data-for="supportNeeds">0 / 1500</span>
+            </div>
+            <div class="field-group">
+              <label for="additionalNotes">추가 참고 사항 <span>선택</span></label>
+              <textarea id="additionalNotes" rows="5" maxlength="1200" placeholder="수업 시간, 지원 인력, 일반화가 필요한 장면 등 추가 정보를 입력하세요."></textarea>
+              <span class="char-count" data-for="additionalNotes">0 / 1200</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="formMessage" class="form-message hidden" role="alert"></div>
+
+        <div class="panel-actions between">
+          <button id="backStep1" class="btn ghost" type="button"><span aria-hidden="true">←</span> 이전</button>
+          <button id="goStep3" class="btn primary" type="button">입력 내용 검토하기 <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+
+      <section id="step3" class="panel step-panel" aria-labelledby="step3-title">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">STEP 3</p>
+            <h2 id="step3-title">입력 내용을 확인하고 계획을 생성하세요.</h2>
+          </div>
+          <p>생성 결과는 교사의 최종 검토와 교육적 재구성을 거쳐 사용해야 합니다.</p>
+        </div>
+
+        <div id="reviewSummary" class="review-summary"></div>
+
+        <div class="generate-box" id="generateBox">
+          <div class="generate-visual" aria-hidden="true"><span>AI</span></div>
+          <div>
+            <h3>SMART 기반 개별화교육계획 초안 생성</h3>
+            <p>학기 목표, 교육내용, 교육방법, 평가계획 및 평가 초점을 하나의 일관된 구조로 생성합니다.</p>
+          </div>
+          <button id="generateBtn" class="btn accent" type="button">개별화교육계획 생성</button>
+        </div>
+
+        <div id="loadingState" class="loading-state hidden" aria-live="polite">
+          <div class="spinner"></div>
+          <div><b id="loadingTitle">입력 내용을 분석하고 있습니다.</b><p id="loadingMessage">학생의 현행 수준과 요구를 SMART 목표 구조로 연결하는 중입니다.</p></div>
+        </div>
+
+        <div id="apiMessage" class="form-message hidden" role="alert"></div>
+
+        <article id="resultSection" class="result-section hidden">
+          <div class="result-toolbar">
+            <div>
+              <span id="modeBadge" class="mode-badge">AI 생성 결과</span>
+              <h2>개별화교육계획 초안</h2>
+            </div>
+            <div class="toolbar-actions">
+              <button id="editResultBtn" class="btn small ghost" type="button">편집 모드</button>
+              <button id="copyResultBtn" class="btn small ghost" type="button">전체 복사</button>
+              <button id="downloadResultBtn" class="btn small ghost" type="button">JSON 저장</button>
+              <button id="printResultBtn" class="btn small dark" type="button">인쇄·PDF</button>
+            </div>
+          </div>
+          <div id="resultContent"></div>
+          <div class="ai-caution"><b>교사 최종 검토 필수</b> AI 산출물은 학생의 실제 수행과 맥락을 바탕으로 사실 검증하고, 개별화교육지원팀 협의를 거쳐 수정한 뒤 사용하세요.</div>
+        </article>
+
+        <div class="panel-actions between no-print">
+          <button id="backStep2" class="btn ghost" type="button"><span aria-hidden="true">←</span> 입력 수정</button>
+          <button id="regenerateBtn" class="btn primary hidden" type="button">다시 생성하기</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>설계 기준: 개별화교육계획 수립·운영 강화 방안 연구 · 연구학교 세부 운영 안내서 · 2022 개정 특수교육 기본 교육과정</p>
+      <p>경산자인학교 · 생성형 AI 기반 PAIR 프로그램</p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="curriculum-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
