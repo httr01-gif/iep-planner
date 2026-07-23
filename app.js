@@ -509,3 +509,20 @@
   populateLifeAreas();
   updateSelectionControls();
 })();
+const hero = document.getElementById('hero');
+const mainContent = document.querySelector('.main-content');
+const restOfApp = Array.from(mainContent.children).filter(el => el !== hero);
+const originalHidden = new Map(restOfApp.map(el => [el, el.hidden]));
+
+restOfApp.forEach(el => { el.hidden = true; });
+
+document.getElementById('hero-start').addEventListener('click', () => {
+  hero.hidden = true;
+  restOfApp.forEach(el => { el.hidden = originalHidden.get(el); });
+});
+
+document.querySelector('.brand').addEventListener('click', (e) => {
+  e.preventDefault();
+  hero.hidden = false;
+  restOfApp.forEach(el => { el.hidden = true; });
+});
