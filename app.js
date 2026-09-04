@@ -506,6 +506,7 @@
     update();
   });
 
+ window.PAIR = { state, showToast, escapeHtml };
   populateLifeAreas();
   updateSelectionControls();
 })();
